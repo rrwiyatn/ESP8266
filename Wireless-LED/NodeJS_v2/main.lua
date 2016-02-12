@@ -1,5 +1,6 @@
 print("Starting main.lua... \n")
 
+
 --setup GPIO
 led = 3 --GPIO 0
 gpio.mode(led, gpio.OUTPUT) -- set GPIO 0 as an output
@@ -7,12 +8,11 @@ gpio.mode(led, gpio.OUTPUT) -- set GPIO 0 as an output
 --create ESP8266 server
 srv=net.createServer(net.TCP) -- create TCP server
 print("Server created... \n")
+pinState=0 --initially off
 
 --listening on port 80...
 srv:listen(80,function(conn)
     conn:on("receive", function(client,request)
-        -- declare variables
-        local pinState = "";
         local _, _, method, path, vars = string.find(request, "([A-Z]+) (.+)?(.+) HTTP");
         if(method == nil)then
             _, _, method, path = string.find(request, "([A-Z]+) (.+) HTTP");
@@ -24,34 +24,33 @@ srv:listen(80,function(conn)
             end 
         end
 
-        --if receive get request "ON", turn LED on
-        if(_GET.pin == "ON")then
+	   print("Method:"..method);
+        --if receive POST, toggle LED
+        if(method == "POST")then
+           if(pinState==0)then -- if off, then on
               gpio.write(led,gpio.HIGH)
-              pinState=pinState.."1"
+              pinState=1
               print("LED ON")
-              client:send(pinState);
-              client:close();
+              --client:close();
               collectgarbage();
-              
-        --if receive get request "OFF", turn LED off     
-        elseif(_GET.pin == "OFF")then --ledOff
+           elseif(pinState==1)then -- if on, then off
               gpio.write(led,gpio.LOW)
-              pinState=pinState.."0"
+              pinState=0
               print("LED OFF")
-              client:send(pinState);
-              client:close();
+              --client:close();
               collectgarbage();
-
-        --if receive get request "STATS", return pinState to Node.js server
-        elseif(_GET.pin == "STATS")then
-            --currently in progress
+           end
+           
+        --if receive get request, send state   
+        elseif(method == "GET")then
+              conn:send("1");
         end
     end)
 
     -- will trigger when something is sent
     conn:on("sent",function(client)
           print("DATA SENT")
-          client:close();
+          --client:close();
           collectgarbage();
     end)
 end)

@@ -16,5 +16,6 @@ end
 print("Starting init.lua... \n") -- print to your serial terminal (for debugging)
 wifi.setmode(wifi.STATION) -- set the module in STATION mode
 wifi.sta.config("HP-Spectre360","17332E6D") -- setup WiFi SSID and Password, wifi.sta.config("SSID","PASSWORD")
+wifi.sta.autoconnect(1)
 wait_wifi() -- call wait_wifi function
 

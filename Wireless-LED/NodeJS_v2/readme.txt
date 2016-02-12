@@ -4,7 +4,7 @@ The module used for this project is ESP8266 HUZZAH Breakout Board.
 The firmware used is NodeMCU that powered by Lua (see links below)
 
 This folder contains:
-	client.js 	: contain the script to create client and send POST and GET request to ESP8266 server
+	client.js 	: contain the script to create client to seng POST/GET request to ESP8266 server
 	init.lua	: contain script to let your ESP8266 module connect to your wifi
 	main.lua	: contain script to tell your ESP8266 module to do whatever you like :)
 
