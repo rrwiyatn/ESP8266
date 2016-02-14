@@ -12,45 +12,51 @@ pinState=0 --initially off
 
 --listening on port 80...
 srv:listen(80,function(conn)
-    conn:on("receive", function(client,request)
+    conn:on("receive", function(conn,request)
         local _, _, method, path, vars = string.find(request, "([A-Z]+) (.+)?(.+) HTTP");
         if(method == nil)then
             _, _, method, path = string.find(request, "([A-Z]+) (.+) HTTP");
         end
-        local _GET = {}
-        if (vars ~= nil)then
-            for k, v in string.gmatch(vars, "(%w+)=(%w+)&*") do
-                _GET[k] = v
-            end 
-        end
 
+        --print("Received:"..request);
 	   print("Method:"..method);
+
         --if receive POST, toggle LED
         if(method == "POST")then
            if(pinState==0)then -- if off, then on
               gpio.write(led,gpio.HIGH)
               pinState=1
               print("LED ON")
-              --client:close();
-              collectgarbage();
+              message="HTTP/1.1 200 OK\r\n"
+              message=message.."Content-Type: text/html\r\n\r\n";
+              message=message.."POST request successfully received\r\n";
+              conn:send(message);
+              message=nil;
            elseif(pinState==1)then -- if on, then off
               gpio.write(led,gpio.LOW)
               pinState=0
               print("LED OFF")
-              --client:close();
-              collectgarbage();
+              message="HTTP/1.1 200 OK\r\n"
+              message=message.."Content-Type: text/html\r\n\r\n";
+              message=message.."POST request successfully received\r\n";
+              conn:send(message);
+              message=nil;
            end
            
         --if receive get request, send state   
         elseif(method == "GET")then
-              conn:send("1");
+           message="HTTP/1.1 200 OK\r\n"
+           message=message.."Content-Type: text/html\r\n\r\n";
+           --message=message.."<!DOCTYPE HTML>\r\n<html>\r\n";
+           message=message.."LED STATE="..tostring(pinState).."\r\n";
+           conn:send(message);
+           message=nil;
         end
     end)
 
-    -- will trigger when something is sent
-    conn:on("sent",function(client)
+    -- will trigger when server successfully responded to request
+    conn:on("sent",function(conn)
           print("DATA SENT")
-          --client:close();
           collectgarbage();
     end)
 end)

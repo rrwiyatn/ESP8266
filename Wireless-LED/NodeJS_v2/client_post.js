@@ -7,11 +7,14 @@ var options = {
 }
  
 // Start the request
-request(options, function (error, response, body) {
-    if (!error) {
-		console.log('SUCCESS',response.statusCode);
+request(options, function (error, response, body) 
+{
+    if(!error) 
+	{
+		return console.log('Server responded with:',body);
     }
-	if(error){
+	if(error)
+	{
 		return console.error('ERROR:', error);
 	}
 })
