@@ -8,7 +8,11 @@ This folder contains:
 	init.lua		: contain script to let your ESP8266 module connect to your wifi
 	main.lua		: contain script to tell your ESP8266 module to do whatever you like :)
 
-Make sure you have node.js installed. Also, make sure you have the framework required such as request
+Workflow:
+	- If ESP8266 server receives POST request, toggle LED and send response back from the server(success/error)
+	- If ESP8266 server receives GET request, server should send the state of the LED as the response
+
+Make sure you have node.js installed. Also, make sure you have the framework required such as request.
 
 For more documentations, please visit:
 	ESP8266 HUZZAH Breakout Board: https://learn.adafruit.com/adafruit-huzzah-esp8266-breakout/overview
